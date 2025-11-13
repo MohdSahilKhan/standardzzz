@@ -119,4 +119,7 @@ servers:
   variables:
     defaultHost:
       default: localhost:3000
-
+- url: https://standardzzz.onrender.com/
+  variables:
+    defaultHost:
+      default: standardzzz.onrender.com/
