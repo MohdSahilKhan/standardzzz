@@ -43,14 +43,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def assign_managers
-    user = User.find(params[:user_id])
-    manager_ids = params[:manager_ids] || []
-    managers = User.where(id: manager_ids)  
-    user.managers << managers
-    render json: { message: 'Managers assigned successfully' }, status: :ok
-  end
-
   private
 
   def user_params
