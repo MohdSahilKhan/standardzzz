@@ -33,9 +33,6 @@ gem 'rack-cors', :require => 'rack/cors'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails' # ignore if already set up in project
-  gem "rswag-specs"
-  gem 'rswag'
 end
 
 group :development do
@@ -72,3 +69,7 @@ gem "administrate-field-nested_has_many"
 gem 'rolify'
 
 gem 'jwt'
+
+gem 'rspec-rails'
+gem "rswag-specs"
+gem 'rswag'
