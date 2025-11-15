@@ -13,13 +13,22 @@ class Api::SessionsController < ActionController::Base
 
   def verify_email
     user = User.find_by(email: params[:email])
-    if user && user.email_otp == params[:otp]
-      mobile_otp = rand(100000..999999).to_s
-      user.update(email_otp: nil, mobile_otp: mobile_otp)
-      TwilioService.new.send_otp("+91#{user.mobile_number}", mobile_otp)
-      render json: { message: "Email verified successfully", success: true }, status: :ok
-    else
-      render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
+    if user.is_active
+      if user && user.email_otp == params[:otp]
+        user.update(email_otp: nil)
+        render json: { message: "Email verified successfully", success: true, id: user.id, full_name: user.full_name, token: user.login_token, }, status: :ok
+      else
+        render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
+      end
+    else 
+      if user && user.email_otp == params[:otp]
+        mobile_otp = rand(100000..999999).to_s
+        user.update(email_otp: nil, mobile_otp: mobile_otp)
+        TwilioService.new.send_otp("+91#{user.mobile_number}", mobile_otp)
+        render json: { message: "Email verified successfully, please verify Mobile number", success: true }, status: :ok
+      else
+        render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
+      end
     end
   end
 
@@ -32,6 +41,30 @@ class Api::SessionsController < ActionController::Base
       render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
     end
   end
+
+  def login_with_email
+    user = User.find_by(email: params[:email])
+    if user
+      email_otp = rand(100000..999999).to_s
+      user.update(email_otp: email_otp)
+      UserMailer.with(user: user, otp: email_otp).send_email_otp.deliver_now
+      render json: { message: "Please verify Your Email", success: true }, status: :ok
+    else
+      render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
+    end
+  end
+  def login_with_mobile
+    user = User.find_by(mobile_number: params[:mobile_number])
+    if user
+      mobile_otp = rand(100000..999999).to_s
+      user.update(mobile_otp: mobile_otp)
+      TwilioService.new.send_otp("+91#{user.mobile_number}", mobile_otp)
+      render json: { message: "Please verify Your mobile number", success: true }, status: :ok
+    else
+      render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     sign_out(current_user)
     render json: { message: 'Logged out successfully' }

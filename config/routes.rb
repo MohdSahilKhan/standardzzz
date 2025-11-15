@@ -29,6 +29,8 @@ Rails.application.routes.draw do
     post 'login', to: 'sessions#create'
     post 'verify_email', to: 'sessions#verify_email'
     post 'verify_mobile', to: 'sessions#verify_mobile'
+    post 'login_with_email', to: 'sessions#login_with_email'
+    post 'login_with_mobile', to: 'sessions#login_with_mobile'
     delete 'logout', to: 'sessions#destroy'
     post 'signup', to: 'registrations#create'
     post 'forgot_password', to: 'passwords#create'
