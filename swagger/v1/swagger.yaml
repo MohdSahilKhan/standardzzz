@@ -227,7 +227,7 @@ servers:
   variables:
     defaultHost:
       default: localhost:3000
-- url: https://standardzzz.onrender.com/
+- url: https://rails-api-3rfk.onrender.com/
   variables:
     defaultHost:
       default: standardzzz.onrender.com/
