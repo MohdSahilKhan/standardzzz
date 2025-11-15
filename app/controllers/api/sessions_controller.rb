@@ -14,7 +14,9 @@ class Api::SessionsController < ActionController::Base
   def verify_email
     user = User.find_by(email: params[:email])
     if user && user.email_otp == params[:otp]
-      user.update(email_otp: nil)
+      mobile_otp = rand(100000..999999).to_s
+      user.update(email_otp: nil, mobile_otp: mobile_otp)
+      TwilioService.new.send_otp("+91#{user.mobile_number}", mobile_otp)
       render json: { message: "Email verified successfully", success: true }, status: :ok
     else
       render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
@@ -22,10 +24,10 @@ class Api::SessionsController < ActionController::Base
   end
 
   def verify_mobile
-    user = User.find_by(email: params[:email])
+    user = User.find_by(mobile_number: params[:mobile_number])
     if user && user.mobile_otp == params[:otp]
-      user.update(mobile_otp: nil, , is_active: true)
-      render json: { message: "Mobile verified successfully", success: true, id: user.id, full_name: user.full_name, token: user.login_token, success: true  }, status: :ok
+      user.update(mobile_otp: nil, is_active: true)
+      render json: { message: "Mobile verified successfully", success: true, id: user.id, full_name: user.full_name, token: user.login_token, }, status: :ok
     else
       render json: { error: "Invalid OTP", success: false }, status: :unprocessable_entity
     end

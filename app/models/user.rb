@@ -16,7 +16,7 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }, on: :create
   validates :password, presence: true, length: { minimum: 6 }, on: :create
-
+  validates :mobile_number, uniqueness: true
   def ensure_login_token
     self.login_token ||= Devise.friendly_token
   end

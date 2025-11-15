@@ -65,6 +65,9 @@ paths:
                 otp:
                   type: string
                   example: "123456"
+      responses: 
+        '201':
+          description: Created
 
   /api/verify_mobile:
     post:
@@ -88,6 +91,9 @@ paths:
                 otp:
                   type: string
                   example: "123456"
+      responses: 
+        '201':
+          description: Created
   /api/login:
     post:
       summary: login a user.
@@ -128,6 +134,9 @@ paths:
                 email:
                   type: string
                   example: "user@example.com"
+      responses: 
+        '201':
+          description: Created
 
   /api/login_with_mobile:
     post:
@@ -147,6 +156,9 @@ paths:
                 mobile_number:
                   type: string
                   example: "9876543210"
+      responses: 
+        '201':
+          description: Created
 
   /api/forgot_password:
     post:

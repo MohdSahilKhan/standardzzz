@@ -8,5 +8,8 @@ class AddNewFieldsToUsers < ActiveRecord::Migration[6.1]
     add_column :users, :state, :string  
     add_column :users, :pincode, :string  
     add_column :users, :is_active, :boolean, default: false
+
+    add_index :users, :mobile_number, unique: true
+
   end
 end
