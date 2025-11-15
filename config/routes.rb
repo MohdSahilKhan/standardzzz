@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   
   namespace :api do
     post 'login', to: 'sessions#create'
+    post 'verify_email', to: 'sessions#verify_email'
+    post 'verify_mobile', to: 'sessions#verify_mobile'
     delete 'logout', to: 'sessions#destroy'
     post 'signup', to: 'registrations#create'
     post 'forgot_password', to: 'passwords#create'

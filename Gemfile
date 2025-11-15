@@ -73,3 +73,4 @@ gem 'jwt'
 gem 'rspec-rails'
 gem "rswag-specs"
 gem 'rswag'
+gem 'dotenv-rails'

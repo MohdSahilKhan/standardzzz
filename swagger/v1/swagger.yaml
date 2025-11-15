@@ -18,6 +18,8 @@ paths:
   /api/signup:
     post:
       summary: Creates a user.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -28,8 +30,12 @@ paths:
                 user:
                   type: object
                   properties:
+                    full_name:
+                      type: string
                     email:
                       type: string
+                    mobile_number:
+                      type: number
                     password:
                       type: string
                     password_confirmation:
@@ -37,9 +43,56 @@ paths:
       responses: 
         '201':
           description: Created
+  /api/verify_email:
+    post:
+      summary: Verify user's email using OTP
+      description: Checks if the provided email OTP matches and marks email as verified.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+              properties:
+                email:
+                  type: string
+                  example: "user@example.com"
+                otp:
+                  type: string
+                  example: "123456"
+
+  /api/verify_mobile:
+    post:
+      summary: Verify user's mobile number using OTP
+      description: Checks if the mobile OTP matches and marks mobile as verified.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile_number
+                - otp
+              properties:
+                mobile_number:
+                  type: string
+                  example: "9876543210"
+                otp:
+                  type: string
+                  example: "123456"
   /api/login:
     post:
       summary: login a user.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -54,28 +107,52 @@ paths:
                       type: string
                     password:
                       type: string
-                    role:
-                      type: string
       responses: 
         '201':
           description: Created
-  /api/logout:
-    delete:
-      summary: Logout from account.
+  /api/login_with_email:
+    post:
+      summary: Login with user email
+      description: enter email and verify OTP using verify email_otp API.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - email
               properties:
-                
-      responses: 
-        '201':
-          description: Created
+                email:
+                  type: string
+                  example: "user@example.com"
+
+  /api/login_with_mobile:
+    post:
+      summary: Login with user mobile number
+      description: enter mobile number and verify OTP using verify mobile_verify API.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - mobile_number
+              properties:
+                mobile_number:
+                  type: string
+                  example: "9876543210"
+
   /api/forgot_password:
     post:
       summary: user forgets password.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -94,6 +171,8 @@ paths:
   /api/reset_password:
     post:
       summary: user reset password.
+      tags:
+        - Authentication
       requestBody:
         required: true
         content:
@@ -112,7 +191,24 @@ paths:
                       type: string
       responses: 
         '201':
-          description: Created  
+          description: Created 
+
+  /api/logout:
+    delete:
+      summary: Logout from account.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                
+      responses: 
+        '201':
+          description: Created
 
 servers:
 - url: http://{defaultHost}
