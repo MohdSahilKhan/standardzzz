@@ -1,52 +1,54 @@
 class UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
+  before_action :set_user, only: [:show, :update, :destroy]
 
   def index
-    @users = User.all
-    render json: @users
-  end
-  
-  def show
-    user = User.find(params[:id])
-    # Fetch roles using rolify gem methods
-    roles = user.roles.map(&:name)
-    if user.present?
-      render json: { user: user, roles: roles }, status: :ok
-    else
-      render json: { error: 'User not found' }, status: :not_found
-    end
+    users = User.all
+    render json: { success: true, users: users }, status: :ok
   end
 
-  def create
-    @user = User.new(user_params)      
-    if @user.save    
-      render json: { user: @user, message: "User created successfully", success: true }, status: :created
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
-  end
-  def create
-    @user = User.new(user_params)      
-    if @user.save    
-      render json: @user, status: :created
-    else
-      render json: @user.errors, status: :unprocessable_entity
-    end
+  def show
+    render json: { success: true, user: @user }, status: :ok
   end
 
   def update
-    @user = User.find(params[:id])
-    if @user.update(profile_picture: params[:profile_picture])
-      render json: { message: 'User Profile picture updated successfully' }
+    if @user.update(user_params)
+      render json: { success: true, message: "User updated successfully", user: @user }, status: :ok
     else
-      render json: { error: @user.errors.full_messages.join(', ') }, status: :unprocessable_entity
+      render json: { success: false, errors: @user.errors.full_message }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @user.destroy
+      render json: { success: true, message: "User deleted successfully" }, status: :ok
+    else
+      render json: { success: false, errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :full_name, :father_name, :mother_name, :linkedin_profile, :contact_no, :personal_email,  :blood_group, :marital_status, :date_of_birth, :uan_no, :esic_no, :employee_id, :employee_type, :job_type, :date_of_joining, :relieving_date, :resignation_date, :resignation_status, :notice_period, :retention_bonus, :retention_time, :retention_bonus_no, :gender, :city, :pincode, :state, :address , :designation , :emergency_contact_no, :profile_picture )
+    params.require(:user).permit(
+      :email, :password, :password_confirmation,
+      :full_name, :mobile_number, :gender,
+      :address, :city, :state, :pincode,
+      :is_active, :email_otp, :mobile_otp,
+      :profile_picture
+    )
+  rescue ActionController::ParameterMissing
+    render json: {
+      success: false,
+      message: "Required user params are missing"
+    }, status: :bad_request
   end
 
+  def set_user
+    @user = User.find_by(id: params[:id])
+
+    unless @user
+      render json: { success: false, message: "User not found" }, status: :not_found
+    end
+  end
 end
