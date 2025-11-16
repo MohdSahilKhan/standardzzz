@@ -4,10 +4,10 @@ class Api::RegistrationsController < ActionController::Base
     def create
       user = User.new(sign_up_params)
       if user.save
-        email_otp = rand(100000..999999).to_s
-        user.update(email_otp: email_otp)
-        UserMailer.with(user: user, otp: email_otp).send_email_otp.deliver_now
-        render json: { message: 'User created successfully, Please verify your Email' }
+        mobile_otp = rand(100000..999999).to_s
+        user.update(mobile_otp: mobile_otp)
+        TwilioService.new.send_otp("+91#{user.mobile_number}", mobile_otp)
+        render json: { message: 'User created successfully, Please verify your Mobile Number' }
       else
         render json: { error: user.errors.full_messages.join(', ') }, status: :unprocessable_entity
       end
@@ -16,6 +16,6 @@ class Api::RegistrationsController < ActionController::Base
     private
     
     def sign_up_params
-      params.require(:user).permit(:email, :password, :password_confirmation, :mobile_number, :full_name)
+      params.require(:user).permit(:mobile_number, :full_name)
     end
 end

@@ -32,39 +32,8 @@ paths:
                   properties:
                     full_name:
                       type: string
-                    email:
-                      type: string
                     mobile_number:
                       type: number
-                    password:
-                      type: string
-                    password_confirmation:
-                      type: string
-      responses: 
-        '201':
-          description: Created
-  /api/verify_email:
-    post:
-      summary: Verify user's email using OTP
-      description: Checks if the provided email OTP matches and marks email as verified.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - otp
-              properties:
-                email:
-                  type: string
-                  example: "user@example.com"
-                otp:
-                  type: string
-                  example: "123456"
       responses: 
         '201':
           description: Created
@@ -94,6 +63,33 @@ paths:
       responses: 
         '201':
           description: Created
+
+  /api/verify_email:
+    post:
+      summary: Verify user's email using OTP
+      description: Checks if the provided email OTP matches and marks email as verified.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - otp
+              properties:
+                email:
+                  type: string
+                  example: "user@example.com"
+                otp:
+                  type: string
+                  example: "123456"
+      responses: 
+        '201':
+          description: Created
+
   /api/login:
     post:
       summary: login a user.
@@ -116,27 +112,6 @@ paths:
       responses: 
         '201':
           description: Created
-  /api/login_with_email:
-    post:
-      summary: Login with user email
-      description: enter email and verify OTP using verify email_otp API.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-              properties:
-                email:
-                  type: string
-                  example: "user@example.com"
-      responses: 
-        '201':
-          description: Created
 
   /api/login_with_mobile:
     post:
@@ -156,6 +131,28 @@ paths:
                 mobile_number:
                   type: string
                   example: "9876543210"
+      responses: 
+        '201':
+          description: Created
+          
+  /api/login_with_email:
+    post:
+      summary: Login with user email
+      description: enter email and verify OTP using verify email_otp API.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: "user@example.com"
       responses: 
         '201':
           description: Created
