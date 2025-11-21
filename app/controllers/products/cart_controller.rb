@@ -1,13 +1,28 @@
 module Products
-  class CartController < ApplicationController
-    before_action :set_product
-    before_action :set_user
+  class CartController < BaseController
     skip_before_action :verify_authenticity_token
-
-    # Add item to cart
+    before_action :authenticate_user!
+    before_action :set_cart_item, only: [:remove]
+    before_action :set_product, only: [:add]
     def add
-      cart_item = CartItem.find_or_initialize_by(user: @user, product: @product)
-      cart_item.quantity += (params[:quantity] || 1).to_i
+      cart_item = CartItem.find_by(
+        user: current_user,
+        product: @product,
+        color: params[:color],
+        size: params[:size]
+      )
+
+      if cart_item
+        cart_item.quantity += (params[:quantity] || 1).to_i
+      else
+        cart_item = CartItem.new(
+          user: current_user,
+          product: @product,
+          color: params[:color],
+          size: params[:size],
+          quantity: (params[:quantity] || 1).to_i
+        )
+      end
 
       if cart_item.save
         render json: cart_item, status: :ok
@@ -16,38 +31,33 @@ module Products
       end
     end
 
-    # Remove item completely
     def remove
-      cart_item = CartItem.find_by(user: @user, product: @product)
-
-      if cart_item
-        cart_item.destroy
-        render json: { message: "Item removed" }
-      else
-        render json: { error: "Not in cart" }, status: :not_found
-      end
+      @cart_item.destroy
+      render json: { message: "Item removed" }
     end
 
-    # View cart
     def show
-      items = CartItem.where(user: @user).includes(:product)
+      items = CartItem.where(user: current_user).includes(:product).order(id: :desc)
       render json: items.as_json(include: :product)
     end
 
-    # Clear cart
     def clear
-      CartItem.where(user: @user).destroy_all
+      CartItem.where(user: current_user).destroy_all
       render json: { message: "Cart cleared" }
     end
 
     private
 
     def set_product
-      @product = Product.find(params[:product_id]) if params[:product_id]
+      @product = Product.find(params[:product_id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Product not found with ID #{params[:product_id]}" }, status: :not_found
     end
 
-    def set_user
-      @user = User.find(params[:user_id])
+    def set_cart_item
+      @cart_item = CartItem.find(params[:cart_item_id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Cart item not found with ID" }, status: :not_found
     end
   end
 end
