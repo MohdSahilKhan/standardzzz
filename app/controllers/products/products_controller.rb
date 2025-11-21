@@ -49,6 +49,8 @@ module Products
 
     def set_product
       @product = Product.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Product not found with id #{params[:id]}" }, status: :not_found
     end
 
     def product_params
