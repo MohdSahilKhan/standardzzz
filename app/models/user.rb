@@ -30,6 +30,25 @@ class User < ApplicationRecord
   def regenerate_login_token
     self.update!(login_token: Devise.friendly_token)
   end
+  
+  def self.ransackable_attributes(auth_object = nil)
+    [
+      "id",
+      "full_name",
+      "email",
+      "mobile_number",
+      "gender",
+      "city",
+      "state",
+      "is_active",
+      "created_at",
+      "updated_at"
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
 
   private
   after_create :assign_default_role
