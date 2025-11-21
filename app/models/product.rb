@@ -3,6 +3,8 @@ class Product < ApplicationRecord
   has_many :order_items
 
   validates :name, :price, :stock, presence: true
+  has_many_attached :images
+
   def self.ransackable_attributes(auth_object = nil)
     ["id", "name", "description", "colour", "size", "price", "stock", "created_at", "updated_at"]
   end

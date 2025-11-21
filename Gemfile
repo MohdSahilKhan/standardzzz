@@ -76,3 +76,4 @@ gem 'rswag'
 gem 'dotenv-rails'
 gem 'twilio-ruby'
 gem "activeadmin_addons"
+gem "aws-sdk-s3", require: false
