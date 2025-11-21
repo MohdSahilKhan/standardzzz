@@ -1,29 +1,32 @@
 Rails.application.routes.draw do
-  resources :managers
-  namespace :admin do
-    root to: "users#index"
-    resources :users
-    resources :statuses
-    resources :tasks
-    resources :projects
-    resources :roles
-  end
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+  # resources :managers
   
-  get '/displayleaves', to: 'leaves#display_leaves'
+  # get '/displayleaves', to: 'leaves#display_leaves'
   
   devise_for :users
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   resources :users
-  resources :statuses
-  resources :leaves
-  resources :salary_infos
-  post '/users/new_user', to: 'users#create'
-  
-  get '/users/:id', to: 'users#show'
+  scope module: :products do
+    resources :products
 
-  post '/users/:user_id/assign_managers', to: 'users#assign_managers'
+    # Cart
+    post   "/cart/add",    to: "cart#add"
+    post   "/cart/remove", to: "cart#remove"
+    get    "/cart/show",   to: "cart#show"
+    delete "/cart/clear",  to: "cart#clear"
+
+    # Orders
+    post "/orders/place",       to: "orders#place"
+    get  "/orders/user_orders", to: "orders#user_orders"
+  end
+
+  # Orders
+  post "/orders/place",        to: "orders#place"
+  get  "/orders/user_orders",  to: "orders#user_orders"
   
   namespace :api do
     post 'login', to: 'sessions#create'
@@ -36,8 +39,4 @@ Rails.application.routes.draw do
     post 'forgot_password', to: 'passwords#create'
     put 'reset_password', to: 'passwords#update'
   end
-
-  resources :bank_details
-  
-  resources :documents
 end

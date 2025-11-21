@@ -1,8 +1,16 @@
----
 openapi: 3.0.1
+
 info:
   title: API V1
   version: v1
+
+servers:
+  - url: http://{defaultHost}
+    variables:
+      defaultHost:
+        default: localhost:3000
+
+  - url: https://rails-api-3rfk.onrender.com/
 
 components:
   securitySchemes:
@@ -11,15 +19,35 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        email: { type: string, nullable: true }
+        full_name: { type: string }
+        mobile_number: { type: string }
+        gender: { type: string }
+        address: { type: string }
+        city: { type: string }
+        state: { type: string }
+        pincode: { type: string }
+        is_active: { type: boolean }
+        email_otp: { type: string }
+        mobile_otp: { type: string }
+        profile_picture: { type: string }
+        created_at: { type: string }
+        updated_at: { type: string }
+
 security:
   - BearerAuth: []
 
 paths:
+
   /api/signup:
     post:
       summary: Creates a user.
-      tags:
-        - Authentication
+      tags: [Authentication]
       requestBody:
         required: true
         content:
@@ -30,71 +58,49 @@ paths:
                 user:
                   type: object
                   properties:
-                    full_name:
-                      type: string
-                    mobile_number:
-                      type: number
-      responses: 
-        '201':
-          description: Created
+                    full_name: { type: string }
+                    mobile_number: { type: number }
+      responses:
+        "201": { description: Created }
 
   /api/verify_mobile:
     post:
-      summary: Verify user's mobile number using OTP
-      description: Checks if the mobile OTP matches and marks mobile as verified.
-      tags:
-        - Authentication
+      summary: Verify user's mobile OTP
+      tags: [Authentication]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - mobile_number
-                - otp
+              required: [mobile_number, otp]
               properties:
-                mobile_number:
-                  type: string
-                  example: "9876543210"
-                otp:
-                  type: string
-                  example: "123456"
-      responses: 
-        '201':
-          description: Created
+                mobile_number: { type: string }
+                otp: { type: string }
+      responses:
+        "201": { description: Created }
 
   /api/verify_email:
     post:
-      summary: Verify user's email using OTP
-      description: Checks if the provided email OTP matches and marks email as verified.
-      tags:
-        - Authentication
+      summary: Verify user's email OTP
+      tags: [Authentication]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - email
-                - otp
+              required: [email, otp]
               properties:
-                email:
-                  type: string
-                  example: "user@example.com"
-                otp:
-                  type: string
-                  example: "123456"
-      responses: 
-        '201':
-          description: Created
+                email: { type: string }
+                otp: { type: string }
+      responses:
+        "201": { description: Created }
 
   /api/login:
     post:
-      summary: login a user.
-      tags:
-        - Authentication
+      summary: Login a user
+      tags: [Authentication]
       requestBody:
         required: true
         content:
@@ -105,63 +111,45 @@ paths:
                 user:
                   type: object
                   properties:
-                    email:
-                      type: string
-                    password:
-                      type: string
-      responses: 
-        '201':
-          description: Created
-
+                    email: { type: string }
+                    password: { type: string }
+      responses:
+        "201": { description: Created }
   /api/login_with_mobile:
     post:
-      summary: Login with user mobile number
-      description: enter mobile number and verify OTP using verify mobile_verify API.
-      tags:
-        - Authentication
+      summary: Login with mobile OTP flow
+      tags: [Authentication]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - mobile_number
+              required: [mobile_number]
               properties:
-                mobile_number:
-                  type: string
-                  example: "9876543210"
-      responses: 
-        '201':
-          description: Created
+                mobile_number: { type: string }
+      responses:
+        '201': { description: Created }
 
   /api/login_with_email:
     post:
-      summary: Login with user email
-      description: enter email and verify OTP using verify email_otp API.
-      tags:
-        - Authentication
+      summary: Login with email OTP flow
+      tags: [Authentication]
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required:
-                - email
+              required: [email]
               properties:
-                email:
-                  type: string
-                  example: "user@example.com"
-      responses: 
-        '201':
-          description: Created
-
+                email: { type: string }
+      responses:
+        '201': { description: Created }
   /api/forgot_password:
     post:
-      summary: user forgets password.
-      tags:
-        - Authentication
+      summary: User forgets password
+      tags: [Authentication]
       requestBody:
         required: true
         content:
@@ -172,16 +160,14 @@ paths:
                 user:
                   type: object
                   properties:
-                    email:
-                      type: string
-      responses: 
-        '201':
-          description: Created
+                    email: { type: string }
+      responses:
+        '201': { description: Created }
+
   /api/reset_password:
     post:
-      summary: user reset password.
-      tags:
-        - Authentication
+      summary: Reset user password
+      tags: [Authentication]
       requestBody:
         required: true
         content:
@@ -192,211 +178,209 @@ paths:
                 user:
                   type: object
                   properties:
-                    reset_password_token:
-                      type: string
-                    password:
-                      type: string
-                    password_confirmation:
-                      type: string
-      responses: 
-        '201':
-          description: Created 
+                    reset_password_token: { type: string }
+                    password: { type: string }
+                    password_confirmation: { type: string }
+      responses:
+        '201': { description: Created }
 
   /api/logout:
     delete:
-      summary: Logout from account.
-      tags:
-        - Authentication
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                
-      responses: 
-        '201':
-          description: Created
+      summary: Logout account
+      tags: [Authentication]
+      responses:
+        '201': { description: Created }
 
   /users:
     get:
       summary: Get all users
-      tags:
-        - Users
+      tags: [Users]
       responses:
-        '200':
-          description: List of all users
+        "200": { description: List of all users }
   /users/{id}:
     get:
-      summary: Get a single user by ID
-      tags:
-        - Users
+      summary: Get user by ID
+      tags: [Users]
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
-          schema:
-            type: integer
+          schema: { type: integer }
       responses:
-        '200':
-          description: User found
+        '200': { description: User found }
 
     put:
       summary: Update user by ID
-      tags:
-        - Users
+      tags: [Users]
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
-          schema:
-            type: integer
+          schema: { type: integer }
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              user:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-                password_confirmation:
-                  type: string
-                full_name:
-                  type: string
-                mobile_number:
-                  type: string
-                gender:
-                  type: string
-                address:
-                  type: string
-                city:
-                  type: string
-                state:
-                  type: string
-                pincode:
-                  type: string
-                is_active:
-                  type: boolean
-                email_otp:
-                  type: string
-                mobile_otp:
-                  type: string
-                profile_picture:
-                  type: string
+              $ref: "#/components/schemas/UserUpdateRequest"
       responses:
-        '200':
-          description: User updated successfully
+        '200': { description: User updated successfully }
 
     delete:
       summary: Delete user by ID
-      tags:
-        - Users
+      tags: [Users]
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
-          schema:
-            type: integer
+          schema: { type: integer }
       responses:
         '200':
           description: User deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-        '404':
-          description: User not found
 
-components:
-schemas:
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-      email:
-        type: string
-        nullable: true
-      full_name:
-        type: string
-      mobile_number:
-        type: string
-      gender:
-        type: string
-      address:
-        type: string
-      city:
-        type: string
-      state:
-        type: string
-      pincode:
-        type: string
-      is_active:
-        type: boolean
-      email_otp:
-        type: string
-      mobile_otp:
-        type: string
-      profile_picture:
-        type: string
-        description: Upload field (URL or Base64)
-      created_at:
-        type: string
-      updated_at:
-        type: string
+  /products:
+    get:
+      summary: Get all products
+      tags: [Products]
+      responses:
+        "200": { description: List of products }
 
-  UserUpdateRequest:
-    type: object
-    properties:
-      user:
-        type: object
-        properties:
-          email:
-            type: string
-          password:
-            type: string
-          password_confirmation:
-            type: string
-          full_name:
-            type: string
-          mobile_number:
-            type: string
-          gender:
-            type: string
-          address:
-            type: string
-          city:
-            type: string
-          state:
-            type: string
-          pincode:
-            type: string
-          is_active:
-            type: boolean
-          email_otp:
-            type: string
-          mobile_otp:
-            type: string
-          profile_picture:
-            type: string
+    post:
+      summary: Create a product
+      tags: [Products]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description:
+                      type: array
+                      items: { type: string }
+                    colour:
+                      type: array
+                      items: { type: string }
+                    size:
+                      type: array
+                      items: { type: string }
+                    price: { type: number }
+                    stock: { type: boolean }
+      responses:
+        "201": { description: Product created }
+  /products/{id}:
+    get:
+      summary: Get product by ID
+      tags: [Products]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Product details }
 
+    put:
+      summary: Update a product
+      tags: [Products]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description:
+                      type: array
+                      items: { type: string }
+                    colour:
+                      type: array
+                      items: { type: string }
+                    size:
+                      type: array
+                      items: { type: string }
+                    price: { type: number }
+                    stock: { type: boolean }
+      responses:
+        '200': { description: Product updated }
 
-servers:
-- url: http://{defaultHost}
-  variables:
-    defaultHost:
-      default: localhost:3000
-- url: https://rails-api-3rfk.onrender.com/
-  variables:
-    defaultHost:
-      default: standardzzz.onrender.com/
+    delete:
+      summary: Delete a product
+      tags: [Products]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Product deleted }
+  /cart/add:
+    post:
+      summary: Add product to cart
+      tags: [Cart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id: { type: integer }
+                quantity: { type: integer }
+      responses:
+        '200': { description: Item added }
+
+  /cart/remove:
+    post:
+      summary: Remove product from cart
+      tags: [Cart]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id: { type: integer }
+      responses:
+        '200': { description: Item removed }
+
+  /cart/show:
+    get:
+      summary: Show current user cart
+      tags: [Cart]
+      responses:
+        '200': { description: Cart data }
+
+  /cart/clear:
+    delete:
+      summary: Clear current cart
+      tags: [Cart]
+      responses:
+        '200': { description: Cart cleared }
+  /orders/place:
+    post:
+      summary: Place order from cart
+      tags: [Orders]
+      responses:
+        '201': { description: Order created }
+
+  /orders/user_orders:
+    get:
+      summary: Get user’s orders
+      tags: [Orders]
+      responses:
+        '200': { description: List of user orders }

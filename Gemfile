@@ -59,7 +59,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'devise'
- 
+gem 'activeadmin'
 gem 'administrate'
 
 gem 'pry'
@@ -75,3 +75,4 @@ gem "rswag-specs"
 gem 'rswag'
 gem 'dotenv-rails'
 gem 'twilio-ruby'
+gem "activeadmin_addons"
