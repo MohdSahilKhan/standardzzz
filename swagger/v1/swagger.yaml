@@ -19,26 +19,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-  schemas:
-    User:
-      type: object
-      properties:
-        id: { type: integer }
-        email: { type: string, nullable: true }
-        full_name: { type: string }
-        mobile_number: { type: string }
-        gender: { type: string }
-        address: { type: string }
-        city: { type: string }
-        state: { type: string }
-        pincode: { type: string }
-        is_active: { type: boolean }
-        email_otp: { type: string }
-        mobile_otp: { type: string }
-        profile_picture: { type: string }
-        created_at: { type: string }
-        updated_at: { type: string }
-
 security:
   - BearerAuth: []
 
@@ -222,7 +202,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserUpdateRequest"
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email: { type: string }
+                    full_name: { type: string }
+                    mobile_number: { type: string }
+                    gender: { type: string }
+                    address: { type: string }
+                    city: { type: string }
+                    state: { type: string }
+                    pincode: { type: string }
+
       responses:
         '200': { description: User updated successfully }
 
@@ -373,12 +366,30 @@ paths:
       tags: [Cart]
       responses:
         '200': { description: Cart cleared }
-  /orders/place:
+  /orders/place_order:
     post:
       summary: Place order from cart
       tags: [Orders]
       responses:
         '201': { description: Order created }
+  /orders/buy_now:
+    post:
+      summary: Place order from Buy Now
+      tags: [Orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id: { type: integer }
+                color: { type: string }
+                size: { type: string }
+                quantity: { type: string }
+
+      responses:
+        '200': { description: Item removed }
 
   /orders/user_orders:
     get:

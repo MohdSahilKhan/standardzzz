@@ -20,7 +20,8 @@ Rails.application.routes.draw do
     delete "/cart/clear",  to: "cart#clear"
 
     # Orders
-    post "/orders/place",       to: "orders#place"
+    post "/orders/place_order", to: "orders#place_order"
+    post  "/orders/buy_now", to: "orders#buy_now"
     get  "/orders/user_orders", to: "orders#user_orders"
   end
 
